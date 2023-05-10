@@ -1,4 +1,5 @@
-use tokio::{net::TcpListener, io::AsyncReadExt};
+use my_redis::{helper::buffer_to_array, Command};
+use tokio::{io::AsyncReadExt, net::TcpListener};
 
 use bytes::BytesMut;
 
@@ -21,6 +22,9 @@ pub async fn main() -> Result<(), std::io::Error> {
         let mut buf = BytesMut::with_capacity(1024);
         socket.read_buf(&mut buf).await?;
         println!("buffer {:?}", buf);
+
+        let attrs = buffer_to_array(&mut buf);
+        let command = Command::get_command(&attrs[0]);
     }
     // Ok(())
 }
